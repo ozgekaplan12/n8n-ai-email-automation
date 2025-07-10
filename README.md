@@ -1,6 +1,11 @@
 # n8n-ai-email-automation
 # 🤖 n8n AI-Powered Email Automation
 
+<img width="659" height="431" alt="Ekran Resmi 2025-07-10 14 27 34" src="https://github.com/user-attachments/assets/c0fd6cdd-827b-4eed-af49-d2adb8a50552" />
+
+
+
+
 This project is an **AI-assisted email automation workflow** built with [n8n](https://n8n.io/).  
 It reads contact data from Google Sheets, uses an AI Agent (powered by Ollama Chat Model) to generate personalized messages, and automatically sends them via Gmail.
 
