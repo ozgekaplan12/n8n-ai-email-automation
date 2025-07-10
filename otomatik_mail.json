@@ -1,0 +1,393 @@
+{
+  "name": "otomatik mail",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        100
+      ],
+      "id": "6ac8ca97-38e2-4b84-9f39-d6754412842d",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1MLutEacvb9hSZedmGqWKMtGYbY-RGyGhWN8DdtfTkpA",
+          "mode": "list",
+          "cachedResultName": "Otomarik-mail-gönderme",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MLutEacvb9hSZedmGqWKMtGYbY-RGyGhWN8DdtfTkpA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2113447548,
+          "mode": "list",
+          "cachedResultName": "sayfa 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MLutEacvb9hSZedmGqWKMtGYbY-RGyGhWN8DdtfTkpA/edit#gid=2113447548"
+        },
+        "options": {
+          "returnFirstMatch": false
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        20,
+        100
+      ],
+      "id": "507c9472-7b4d-4c36-97d1-77fed8586afa",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gZWL8cwL82zqLCQd",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0e01177-dcfb-4f2b-ad58-5bf4d5d830a0",
+              "name": "mail",
+              "value": "={{ $json.mail }}",
+              "type": "string"
+            },
+            {
+              "id": "8e5fe9f1-1e24-4064-bffd-c85241f97333",
+              "name": "ad-soyad",
+              "value": "={{ $json[\"ad-soyad\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -360,
+        380
+      ],
+      "id": "1a48279d-a977-4018-b099-4a1b10fb633c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        260,
+        100
+      ],
+      "id": "cd748161-8478-4a18-845e-043d5c8cd3c6",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=A new contact needs to receive an email! 📧\n\nHere are the details:\n👤 Full Name: {{ $json[\"ad-soyad\"] }}\n📧 Email: {{ $json.mail }}\n\n✅ Send an email with Gmail to this user.\n✅ After sending, update the \"Sent\" status in Google Sheets.\n",
+        "options": {
+          "systemMessage": "You are a friendly and efficient automation assistant! 👩‍💻✨\nFor each contact in the loop:\n1. Retrieve the contact details from Google Sheets 📑.\n2. Send a personalized email using Gmail 📧.\n3. Update the ‘Sent’ status in Google Sheets ✅.\n4. Send a confirmation email to yourself after each email is sent 💌.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -60,
+        380
+      ],
+      "id": "79fc6741-7a76-4cbd-a545-7282fb809ce8",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama3.1:8b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        660
+      ],
+      "id": "49b3f554-0596-45a1-bd63-cf11cf258e26",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "bn46xygp3Xilpi90",
+          "name": "Ollama account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1MLutEacvb9hSZedmGqWKMtGYbY-RGyGhWN8DdtfTkpA",
+          "mode": "list",
+          "cachedResultName": "Otomarik-mail-gönderme",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MLutEacvb9hSZedmGqWKMtGYbY-RGyGhWN8DdtfTkpA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2113447548,
+          "mode": "list",
+          "cachedResultName": "sayfa 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MLutEacvb9hSZedmGqWKMtGYbY-RGyGhWN8DdtfTkpA/edit#gid=2113447548"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "Mail gönderildi ✅",
+            "mail": "={{ $('Loop Over Items').item.json.mail }}"
+          },
+          "matchingColumns": [
+            "mail"
+          ],
+          "schema": [
+            {
+              "id": "ad-soyad",
+              "displayName": "ad-soyad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "mail",
+              "displayName": "mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "hakkında",
+              "displayName": "hakkında",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "yaş",
+              "displayName": "yaş",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        200,
+        640
+      ],
+      "id": "6d97a0ba-11af-4d8b-ae47-4798700925b6",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gZWL8cwL82zqLCQd",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "ozge.kaplaann@gmail.com",
+        "subject": "Kliniğinizin 7/24 Dijital Asistanı Hazır – nTwin 💬",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        340,
+        380
+      ],
+      "id": "4b050ed6-68d4-46ea-82a7-b4d958d82ce9",
+      "name": "Gmail1",
+      "webhookId": "18fd7055-a1a4-4050-8f0e-2ce04a6eb32a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MavovFtalNN3MJ4X",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.mail }}",
+        "subject": "Kliniğinizin 7/24 Dijital Asistanı Hazır – nTwin 💬",
+        "message": "=<p>Merhaba <strong>[Klinik Adı] Ekibi</strong>,</p>  <p>Siz hastalarınızla ilgilenin, sıkça sorulan sorularla <strong>nTwin</strong> ilgilensin.</p>  <p>Geliştirdiğimiz yapay zekâ destekli dijital asistan sayesinde, hastalarınız günün her saati soru sorabilir; nTwin ise, kliniğinizde çalışan bir uzman gibi anında, güvenilir ve doğru bilgiyle yanıt verir.</p>  <p><strong>Örnek Hasta Soruları:</strong></p> <ul>   <li>“Dolgu fiyatı ne kadar?”</li>   <li>“İmplant işlemi ne kadar sürüyor?”</li>   <li>“Randevu almam gerekiyor mu?”</li>   <li>“Klinikte çocuk hastalara bakılıyor mu?”</li> </ul>  <p><strong>nTwin ile Kazanımlarınız:</strong></p> <ul>   <li>✔️ 7/24 hasta sorularına yanıt</li>   <li>✔️ Ekip yükü azalır, dönüşüm artar</li>   <li>✔️ Kurumsal imaj güçlenir</li>   <li>✔️ Kurulum 5 dakikada tamamlanır</li> </ul>  <p>İlk 14 gün ücretsiz. Klinik başı sadece <strong>$49/ay</strong>’dan başlayan fiyatlarla.</p>  <p>🦷 Örnek bir klinik demosuna buradan ulaşabilirsiniz:<br> 👉 <a href=\"https://your-demo-link.com\" target=\"_blank\">Gülümse Klinik Asistanı’nı Deneyin</a></p>  <p>Uygunsanız, sizin için de benzer bir demo hazırlayabiliriz. Yanıtınızı bekliyorum.</p>  <p>Sevgiler,</p> <p><em>Ekibiniz / nTwin</em></p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        100,
+        600
+      ],
+      "id": "237af0b1-5945-4721-8226-3c80be179a3c",
+      "name": "Gmail",
+      "webhookId": "19da1835-598c-4e4f-9be7-ae1f7941f23e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MavovFtalNN3MJ4X",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ad85bc0c-09d5-4b52-9856-c31d10add8e9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f559cca231b1b8e698f588c05cf105e55eca5f75164150e82f77ff8a68e88137"
+  },
+  "id": "UdjFcbBUFVKFYTmz",
+  "tags": []
+}
